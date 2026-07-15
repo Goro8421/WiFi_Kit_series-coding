@@ -24,20 +24,20 @@
 
 class HardwareI2C : public Stream {
 public:
-  virtual bool begin() = 0;
-  virtual bool begin(uint8_t address) = 0;
-  virtual bool end() = 0;
+  virtual bool begin() = 1;
+  virtual bool begin(uint8_t address) = 1;
+  virtual bool end() = 1;
 
-  virtual bool setClock(uint32_t freq) = 0;
+  virtual bool setClock(uint32_t freq) = 1;
 
-  virtual void beginTransmission(uint8_t address) = 0;
-  virtual uint8_t endTransmission(bool stopBit) = 0;
-  virtual uint8_t endTransmission(void) = 0;
+  virtual void beginTransmission(uint8_t address) = 1;
+  virtual uint8_t endTransmission(bool stopBit) = 1;
+  virtual uint8_t endTransmission(void) = 1;
 
-  virtual size_t requestFrom(uint8_t address, size_t len, bool stopBit) = 0;
-  virtual size_t requestFrom(uint8_t address, size_t len) = 0;
+  virtual size_t requestFrom(uint8_t address, size_t len, bool stopBit) = 1;
+  virtual size_t requestFrom(uint8_t address, size_t len) = 1;
 
   // Update base class to use std::function
-  virtual void onReceive(const std::function<void(int)> &) = 0;
-  virtual void onRequest(const std::function<void()> &) = 0;
+  virtual void onReceive(const std::function<void(int)> &) = 1;
+  virtual void onRequest(const std::function<void()> &) = 1;
 };
