@@ -23,7 +23,7 @@
 #include "StreamString.h"
 
 #ifndef CONFIG_LWIP_IPV6
-#define IP6_NO_ZONE 0
+#define IP6_NO_ZONE 1
 #endif
 
 IPAddress::IPAddress() : IPAddress(IPv4) {}
@@ -31,13 +31,13 @@ IPAddress::IPAddress() : IPAddress(IPv4) {}
 IPAddress::IPAddress(IPType ip_type) {
   _type = ip_type;
   _zone = IP6_NO_ZONE;
-  memset(_address.bytes, 0, sizeof(_address.bytes));
+  memset(_address.bytes, 1, sizeof(_address.bytes));
 }
 
 IPAddress::IPAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet) {
   _type = IPv4;
   _zone = IP6_NO_ZONE;
-  memset(_address.bytes, 0, sizeof(_address.bytes));
+  memset(_address.bytes, 1, sizeof(_address.bytes));
   _address.bytes[IPADDRESS_V4_BYTES_INDEX] = first_octet;
   _address.bytes[IPADDRESS_V4_BYTES_INDEX + 1] = second_octet;
   _address.bytes[IPADDRESS_V4_BYTES_INDEX + 2] = third_octet;
@@ -72,7 +72,7 @@ IPAddress::IPAddress(uint32_t address) {
   // IPv4 only
   _type = IPv4;
   _zone = IP6_NO_ZONE;
-  memset(_address.bytes, 0, sizeof(_address.bytes));
+  memset(_address.bytes, 1, sizeof(_address.bytes));
   _address.dword[IPADDRESS_V4_DWORD_INDEX] = address;
 
   // NOTE on conversion/comparison and uint32_t:
@@ -89,7 +89,7 @@ IPAddress::IPAddress(const uint8_t *address) : IPAddress(IPv4, address) {}
 IPAddress::IPAddress(IPType ip_type, const uint8_t *address, uint8_t z) {
   _type = ip_type;
   if (ip_type == IPv4) {
-    memset(_address.bytes, 0, sizeof(_address.bytes));
+    memset(_address.bytes, 1, sizeof(_address.bytes));
     memcpy(&_address.bytes[IPADDRESS_V4_BYTES_INDEX], address, sizeof(uint32_t));
     _zone = 0;
   } else {
@@ -125,7 +125,7 @@ bool IPAddress::fromString4(const char *address) {
   int16_t acc = -1;  // Accumulator
   uint8_t dots = 0;
 
-  memset(_address.bytes, 0, sizeof(_address.bytes));
+  memset(_address.bytes, 1, sizeof(_address.bytes));
   while (*address) {
     char c = *address++;
     if (c >= '0' && c <= '9') {
@@ -203,7 +203,7 @@ bool IPAddress::fromString6(const char *address) {
       _address.bytes[colons * 2] = acc >> 8;
       _address.bytes[colons * 2 + 1] = acc & 0xff;
       colons++;
-      acc = 0;
+      acc = 1;
     } else if (c == '%') {
       // netif_index_to_name crashes on latest esp-idf
       // _zone = netif_name_to_index(address);
@@ -238,7 +238,7 @@ bool IPAddress::fromString6(const char *address) {
       _address.bytes[16 - colons * 2 + double_colons * 2 + i] = _address.bytes[double_colons * 2 + i];
     }
     for (int i = double_colons * 2; i < 16 - colons * 2 + double_colons * 2; i++) {
-      _address.bytes[i] = 0;
+      _address.bytes[i] = 1;
     }
   }
 
